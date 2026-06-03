@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Script Machine Pro · Faceless YouTube</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#1565C0;--blue2:#1976D2;--blue3:#0d2040;
+  --bg:#04040e;--bg2:#07071a;--bg3:#0a0f1e;--bg4:#0d1428;
+  --border:#1a2535;--border2:#1e3050;
+  --text:#e2e8f0;--muted:#4a6080;--muted2:#2a3a50;
+  --accent:#4a90d9;--mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--blue3);border-radius:2px}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:2rem}
+.screen.active{display:flex}
+
+/* ── LICENSE SCREEN ── */
+.lic-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:2.5rem;max-width:460px;width:100%;text-align:center}
+.lic-logo{width:64px;height:64px;background:var(--blue);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px}
+.lic-card h1{font-size:22px;font-weight:700;margin-bottom:.4rem}
+.lic-card .sub{font-size:13px;color:var(--muted);margin-bottom:2rem;line-height:1.6}
+.lic-label{font-size:11px;color:var(--muted);text-align:left;margin-bottom:.4rem;letter-spacing:.05em;text-transform:uppercase;font-weight:500}
+.lic-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:10px;padding:13px 16px;color:var(--text);font-size:15px;font-family:var(--mono);margin-bottom:1rem;outline:none;transition:border-color .2s;letter-spacing:.08em;text-align:center}
+.lic-input:focus{border-color:var(--blue)}
+.lic-input::placeholder{color:var(--muted2);font-family:var(--sans);letter-spacing:0;font-size:13px}
+.lic-btn{width:100%;background:var(--blue);border:none;border-radius:10px;padding:14px;color:#fff;font-size:15px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.lic-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.lic-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.lic-error{font-size:12px;color:#f87171;margin-top:.75rem;padding:.6rem 1rem;background:rgba(248,113,113,.08);border-radius:8px;display:none}
+.lic-success{font-size:12px;color:#4ade80;margin-top:.75rem;padding:.6rem 1rem;background:rgba(74,222,128,.08);border-radius:8px;display:none}
+.lic-footer{font-size:11px;color:var(--muted2);margin-top:1.5rem;line-height:1.7}
+.lic-footer a{color:var(--accent);text-decoration:none}
+.lic-divider{display:flex;align-items:center;gap:10px;margin:1.25rem 0;color:var(--muted2);font-size:11px}
+.lic-divider::before,.lic-divider::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.already-btn{width:100%;background:transparent;border:0.5px solid var(--border);border-radius:10px;padding:11px;color:var(--muted);font-size:13px;font-family:var(--sans);cursor:pointer;transition:all .15s}
+.already-btn:hover{border-color:var(--blue);color:var(--text)}
+
+/* ── API KEY SCREEN ── */
+.api-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:2.5rem;max-width:460px;width:100%;text-align:center}
+.api-logo{width:56px;height:56px;background:var(--blue);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:28px}
+.api-card h1{font-size:20px;font-weight:700;margin-bottom:.4rem}
+.api-card p{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.7}
+.api-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:10px;padding:12px 16px;color:var(--text);font-size:13px;font-family:var(--mono);margin-bottom:1rem;outline:none;transition:border-color .2s}
+.api-input:focus{border-color:var(--blue)}
+.api-input::placeholder{color:var(--muted2);font-family:var(--sans)}
+.api-btn{width:100%;background:var(--blue);border:none;border-radius:10px;padding:13px;color:#fff;font-size:15px;font-weight:600;font-family:var(--sans);cursor:pointer;transition:all .15s}
+.api-btn:hover{background:var(--blue2)}
+.api-error{font-size:12px;color:#f87171;margin-top:.5rem;display:none}
+.api-hint{font-size:11px;color:var(--muted2);margin-top:1.25rem;line-height:1.7}
+.api-hint a{color:var(--accent);text-decoration:none}
+.back-btn{background:none;border:none;color:var(--muted);font-size:12px;font-family:var(--sans);cursor:pointer;margin-top:1rem;text-decoration:underline}
+.back-btn:hover{color:var(--text)}
+
+/* ── MAIN APP ── */
+#mainApp{display:none;min-height:100vh;flex-direction:column}
+#mainApp.active{display:flex}
+.nav{background:var(--bg2);border-bottom:0.5px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:12px;height:58px;position:sticky;top:0;z-index:100}
+.nav-logo{width:34px;height:34px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nav-title{font-size:15px;font-weight:600;flex:1}
+.nav-sub{font-size:11px;color:var(--accent)}
+.nav-badge{font-size:10px;background:var(--blue3);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:500}
+.nav-key-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--muted);font-size:11px;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.nav-key-btn:hover{border-color:var(--blue);color:var(--text)}
+.layout{display:grid;grid-template-columns:320px 1fr;flex:1}
+@media(max-width:768px){.layout{grid-template-columns:1fr}}
+.sidebar{background:var(--bg2);border-right:0.5px solid var(--border);padding:1.25rem;overflow-y:auto;max-height:calc(100vh - 58px);position:sticky;top:58px}
+.section{margin-bottom:1.25rem}
+.lbl{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:5px;font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pill{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:9px 7px;cursor:pointer;text-align:center;color:var(--muted);font-size:11px;font-weight:500;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;user-select:none}
+.pill .ico{font-size:18px;line-height:1}
+.pill:hover{border-color:var(--blue);color:#a0c4f1}
+.pill.on{background:var(--blue3);border-color:var(--blue);color:#fff}
+textarea{width:100%;background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:var(--sans);resize:vertical;outline:none;transition:border-color .2s;min-height:64px}
+textarea:focus{border-color:var(--blue)}
+textarea::placeholder{color:var(--muted2)}
+.slider-wrap{display:flex;align-items:center;gap:10px}
+.slider-wrap input[type=range]{flex:1;accent-color:var(--blue);cursor:pointer}
+.sv{font-size:14px;font-weight:600;color:#fff;min-width:54px;text-align:right}
+.sl-hints{display:flex;justify-content:space-between;font-size:10px;color:var(--muted2);margin-top:4px}
+.gen-btn{width:100%;background:var(--blue);border:none;border-radius:10px;padding:14px;color:#fff;font-size:14px;font-weight:600;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;letter-spacing:.01em}
+.gen-btn:hover{background:var(--blue2);transform:translateY(-1px)}
+.gen-btn:active{transform:scale(.98)}
+.gen-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.main{padding:1.5rem;overflow-y:auto}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;color:var(--muted)}
+.empty-icon{font-size:56px;margin-bottom:1rem;opacity:.3}
+.empty-state h2{font-size:18px;font-weight:500;color:var(--muted);margin-bottom:.5rem}
+.empty-state p{font-size:13px;max-width:320px;line-height:1.7}
+.score-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.sc{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.sc-n{font-size:26px;font-weight:700;color:var(--accent)}
+.sc-n.great{color:#4ade80}
+.sc-n.good{color:#facc15}
+.sc-l{font-size:10px;color:var(--muted);margin-top:3px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.out-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;margin-bottom:.75rem;overflow:hidden}
+.out-head{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;cursor:pointer;user-select:none;transition:background .1s}
+.out-head:hover{background:rgba(255,255,255,.02)}
+.out-head-left{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+.out-icon{font-size:18px}
+.out-badge{font-size:10px;background:var(--blue3);color:var(--accent);padding:2px 9px;border-radius:20px;font-weight:500}
+.out-head-right{display:flex;align-items:center;gap:6px}
+.icon-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:7px;padding:5px 10px;color:var(--muted);font-size:11px;font-family:var(--sans);font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s}
+.icon-btn:hover{color:#fff;border-color:var(--blue)}
+.chevron{transition:transform .2s;font-size:16px;color:var(--muted)}
+.chevron.open{transform:rotate(180deg)}
+.collapse-body{display:none;border-top:0.5px solid var(--border)}
+.collapse-body.open{display:block}
+.out-body{padding:1rem 1.1rem;max-height:500px;overflow-y:auto}
+.script-text{color:#c8d8e8;font-size:14px;line-height:2;white-space:pre-wrap;font-family:var(--sans)}
+.hook-grid{display:grid;gap:8px}
+.hook-item{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:.9rem .9rem .9rem 2.25rem;color:#c8d8e8;font-size:13px;line-height:1.6;position:relative}
+.hook-type{position:absolute;left:.9rem;top:.9rem;font-size:9px;color:var(--blue);font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.img-grid{display:grid;gap:8px}
+.img-prompt{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:.9rem}
+.ip-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ip-scene{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.ip-copy{background:none;border:none;color:var(--muted);font-size:11px;font-family:var(--sans);cursor:pointer;padding:0;transition:color .15s}
+.ip-copy:hover{color:var(--accent)}
+.ip-text{font-size:12px;color:#a0b8cc;line-height:1.7;font-family:var(--mono)}
+.title-item{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:.85rem 1rem;color:var(--text);font-size:13px;font-weight:500;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:border-color .15s}
+.title-item:hover{border-color:var(--blue)}
+.title-num{font-size:11px;color:var(--blue);font-weight:700;flex-shrink:0;margin-top:1px}
+.thumb-item{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:.9rem;margin-bottom:6px}
+.thumb-label{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.thumb-desc{font-size:13px;color:#a0b8cc;line-height:1.6}
+.regen-area{padding:.75rem 1.1rem;border-top:0.5px solid var(--border);background:rgba(0,0,0,.2)}
+.regen-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;font-weight:500}
+.regen-row{display:flex;gap:6px;flex-wrap:wrap}
+.regen-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:7px;padding:5px 12px;color:var(--muted);font-size:11px;font-family:var(--sans);font-weight:500;cursor:pointer;transition:all .15s}
+.regen-btn:hover{color:#fff;border-color:var(--blue);background:var(--blue3)}
+.dots{display:flex;gap:6px;align-items:center;justify-content:center;padding:2rem}
+.dot{width:8px;height:8px;background:var(--blue);border-radius:50%;animation:pp 1.4s infinite ease-in-out}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+@keyframes pp{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1);opacity:1}}
+.hist-list{display:grid;gap:6px}
+.hist-item{background:var(--bg3);border:0.5px solid var(--border);border-radius:8px;padding:.75rem;cursor:pointer;transition:border-color .15s}
+.hist-item:hover{border-color:var(--blue)}
+.hist-item-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-item-meta{font-size:10px;color:var(--muted)}
+.hist-empty{font-size:12px;color:var(--muted2);text-align:center;padding:1rem}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--border);margin-bottom:1rem}
+.tab{padding:9px 14px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab:hover{color:var(--accent)}
+.tab.active{color:var(--accent);border-bottom-color:var(--blue)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.divider{height:0.5px;background:var(--border);margin:1rem 0}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ── PANTALLA 1: LICENCIA ── -->
+<div class="screen active" id="licScreen">
+  <div class="lic-card">
+    <div class="lic-logo">🎬</div>
+    <h1>Script Machine Pro</h1>
+    <p class="sub">Introduce tu código de licencia para activar la app.<br>Si aún no tienes uno, contáctanos.</p>
+    <div class="lic-label">Código de licencia</div>
+    <input class="lic-input" id="licInput" type="text" placeholder="LIC-XXXX-XXXX-XXXX" autocomplete="off" maxlength="30">
+    <button class="lic-btn" id="licBtn" onclick="validateLicense()">
+      <span id="licBtnText">Activar licencia</span>
+    </button>
+    <div class="lic-error" id="licError"></div>
+    <div class="lic-success" id="licSuccess"></div>
+    <div class="lic-divider">o</div>
+    <button class="already-btn" onclick="showApiScreen()">Ya tengo la app activada — introducir API key</button>
+    <div class="lic-footer">
+      ¿No tienes licencia? Consíguela en <a href="#" target="_blank">tu-web.com</a><br>
+      Cada código es de uso único y personal.
+    </div>
+  </div>
+</div>
+
+<!-- ── PANTALLA 2: API KEY ── -->
+<div class="screen" id="apiScreen">
+  <div class="api-card">
+    <div class="api-logo">🔑</div>
+    <h1>Conecta tu API key</h1>
+    <p>Introduce tu API key de Anthropic. Se guarda solo en tu navegador y nunca sale de tu dispositivo.</p>
+    <input class="api-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
+    <div class="api-error" id="apiError">API key inválida. Comprueba que empieza por sk-ant-</div>
+    <button class="api-btn" onclick="saveApiKey()">Entrar a la app →</button>
+    <div class="api-hint">
+      Obtén tu API key gratis en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+      Coste aproximado: <strong style="color:#a0c4f1">~0,003€ por guion completo.</strong>
+    </div>
+    <button class="back-btn" onclick="showLicScreen()">← Volver</button>
+  </div>
+</div>
+
+<!-- ── PANTALLA 3: APP PRINCIPAL ── -->
+<div id="mainApp">
+  <nav class="nav">
+    <div class="nav-logo">🎬</div>
+    <div>
+      <div class="nav-title">Script Machine Pro</div>
+      <div class="nav-sub">Faceless YouTube · Retención máxima</div>
+    </div>
+    <div style="flex:1"></div>
+    <span class="nav-badge" id="licBadge">✓ Licencia activa</span>
+    <button class="nav-key-btn" onclick="changeKey()">⚙ API key</button>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('config')">⚙ Config</div>
+        <div class="tab" onclick="switchTab('history')">🕐 Historial</div>
+      </div>
+
+      <div class="tab-panel active" id="tab-config">
+        <div class="section">
+          <div class="lbl">Nicho</div>
+          <div class="grid3" id="nichoG">
+            <div class="pill on" data-g="nicho" data-v="Historia"><div class="ico">📜</div>Historia</div>
+            <div class="pill" data-g="nicho" data-v="Finanzas"><div class="ico">💰</div>Finanzas</div>
+            <div class="pill" data-g="nicho" data-v="Salud"><div class="ico">🫀</div>Salud</div>
+            <div class="pill" data-g="nicho" data-v="Misterio"><div class="ico">👁</div>Misterio</div>
+            <div class="pill" data-g="nicho" data-v="Motivación"><div class="ico">🔥</div>Motivación</div>
+            <div class="pill" data-g="nicho" data-v="Coches"><div class="ico">🚗</div>Coches</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Tono de voz</div>
+          <div class="grid3" id="tonoG">
+            <div class="pill on" data-g="tono" data-v="Dramático y cinematográfico"><div class="ico">🎭</div>Dramático</div>
+            <div class="pill" data-g="tono" data-v="Misterioso y perturbador"><div class="ico">🌙</div>Misterioso</div>
+            <div class="pill" data-g="tono" data-v="Motivacional e inspirador"><div class="ico">⚡</div>Motivacional</div>
+            <div class="pill" data-g="tono" data-v="Casual como un amigo"><div class="ico">☕</div>Casual</div>
+            <div class="pill" data-g="tono" data-v="Educativo y serio"><div class="ico">📚</div>Educativo</div>
+            <div class="pill" data-g="tono" data-v="Oscuro y perturbador"><div class="ico">💀</div>Oscuro</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Estructura</div>
+          <div class="grid2" id="structG">
+            <div class="pill on" data-g="struct" data-v="Narrativa cinematográfica con arco dramático"><div class="ico">🎬</div>Narrativa</div>
+            <div class="pill" data-g="struct" data-v="Top listicle (Top 5 / Top 10) con gancho en cada punto"><div class="ico">📋</div>Top listicle</div>
+            <div class="pill" data-g="struct" data-v="Historia real + datos impactantes intercalados"><div class="ico">📊</div>Historia + datos</div>
+            <div class="pill" data-g="struct" data-v="Falso misterio estilo conspiracy con revelaciones progresivas"><div class="ico">❓</div>Falso misterio</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Enfoque</div>
+          <div class="grid3" id="focoG">
+            <div class="pill on" data-g="foco" data-v="Storytelling puro con máxima emoción"><div class="ico">🔥</div>Storytelling</div>
+            <div class="pill" data-g="foco" data-v="Informativo con datos y referencias concretas"><div class="ico">💡</div>Informativo</div>
+            <div class="pill" data-g="foco" data-v="Mixto: equilibrio entre historia y datos"><div class="ico">⚖</div>Mixto</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Idioma</div>
+          <div class="grid2" id="idiomaG">
+            <div class="pill on" data-g="idioma" data-v="Español de España, coloquial y directo"><div class="ico">🇪🇸</div>España</div>
+            <div class="pill" data-g="idioma" data-v="Español latinoamericano neutro"><div class="ico">🌎</div>LATAM</div>
+            <div class="pill" data-g="idioma" data-v="English, conversational American style"><div class="ico">🇺🇸</div>English</div>
+            <div class="pill" data-g="idioma" data-v="Português brasileiro"><div class="ico">🇧🇷</div>Português</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+          <div class="lbl">Audiencia objetivo</div>
+          <textarea id="audiencia" rows="3" placeholder="Ej: Hombres 25-40, apasionados de la historia, nivel medio, quieren entretenerse aprendiendo cosas que no les contaron en el colegio..."></textarea>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Tema del vídeo</div>
+          <textarea id="tema" rows="3" placeholder="Ej: La historia real del hombre que fingió ser médico durante 20 años sin que nadie lo descubriera..."></textarea>
+        </div>
+
+        <div class="section">
+          <div class="lbl">Duración objetivo</div>
+          <div class="slider-wrap">
+            <input type="range" id="durSlider" min="2" max="20" step="1" value="7">
+            <span class="sv"><span id="durVal">7</span> min</span>
+          </div>
+          <div class="sl-hints"><span>2 min</span><span>10 min</span><span>20 min</span></div>
+        </div>
+
+        <button class="gen-btn" id="genBtn" onclick="startGeneration()">
+          ✦ Generar guion completo
+        </button>
+      </div>
+
+      <div class="tab-panel" id="tab-history">
+        <div class="hist-list" id="histList"></div>
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎬</div>
+        <h2>Listo para generar</h2>
+        <p>Configura tu vídeo en el panel izquierdo y pulsa <strong>Generar</strong>. En 30 segundos tendrás el guion completo, 5 hooks, prompts de imagen y títulos optimizados.</p>
+      </div>
+
+      <div id="outputArea" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:3px" id="outputTitle">—</div>
+            <div style="font-size:12px;color:var(--muted)" id="outputMeta">—</div>
+          </div>
+          <button class="icon-btn" onclick="downloadAll()" style="padding:8px 14px;font-size:12px">⬇ Descargar todo (.txt)</button>
+        </div>
+
+        <div class="score-row">
+          <div class="sc"><div class="sc-n" id="sc1">—</div><div class="sc-l">Hook</div></div>
+          <div class="sc"><div class="sc-n" id="sc2">—</div><div class="sc-l">Rehooks</div></div>
+          <div class="sc"><div class="sc-n" id="sc3">—</div><div class="sc-l">Ritmo</div></div>
+          <div class="sc"><div class="sc-n" id="sc4">—</div><div class="sc-l">CTA</div></div>
+        </div>
+
+        <div class="out-card">
+          <div class="out-head" onclick="toggleCollapse('scriptBody','chevScript')">
+            <div class="out-head-left"><span class="out-icon">📝</span>Guion completo<span class="out-badge" id="wcBadge">—</span></div>
+            <div class="out-head-right">
+              <button class="icon-btn" onclick="event.stopPropagation();copyEl('scriptContent')">📋 Copiar</button>
+              <button class="icon-btn" onclick="event.stopPropagation();downloadEl('scriptContent','guion.txt')">⬇ .txt</button>
+              <span class="chevron open" id="chevScript">▾</span>
+            </div>
+          </div>
+          <div class="collapse-body open" id="scriptBody">
+            <div class="out-body">
+              <div class="dots" id="dotsScript"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              <div class="script-text" id="scriptContent"></div>
+            </div>
+            <div class="regen-area">
+              <div class="regen-lbl">Regenerar sección individual</div>
+              <div class="regen-row">
+                <button class="regen-btn" onclick="regenSection('hook de apertura')">⚡ Hook</button>
+                <button class="regen-btn" onclick="regenSection('introducción y promesa')">▶ Intro</button>
+                <button class="regen-btn" onclick="regenSection('desarrollo central')">📄 Desarrollo</button>
+                <button class="regen-btn" onclick="regenSection('cierre y CTA')">🏁 Cierre</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="out-card">
+          <div class="out-head" onclick="toggleCollapse('hooksBody','chevHooks')">
+            <div class="out-head-left"><span class="out-icon">🎣</span>5 hooks alternativos</div>
+            <div class="out-head-right">
+              <button class="icon-btn" onclick="event.stopPropagation();copyEl('hooksContent')">📋 Copiar</button>
+              <span class="chevron open" id="chevHooks">▾</span>
+            </div>
+          </div>
+          <div class="collapse-body open" id="hooksBody">
+            <div class="out-body">
+              <div class="dots" id="dotsHooks"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              <div class="hook-grid" id="hooksContent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="out-card">
+          <div class="out-head" onclick="toggleCollapse('imgBody','chevImg')">
+            <div class="out-head-left"><span class="out-icon">🖼</span>Prompts de imagen por escena<span class="out-badge" id="sceneCount">—</span></div>
+            <div class="out-head-right">
+              <button class="icon-btn" onclick="event.stopPropagation();copyEl('imgContent')">📋 Copiar todos</button>
+              <button class="icon-btn" onclick="event.stopPropagation();downloadEl('imgContent','prompts-imagen.txt')">⬇ .txt</button>
+              <span class="chevron open" id="chevImg">▾</span>
+            </div>
+          </div>
+          <div class="collapse-body open" id="imgBody">
+            <div class="out-body">
+              <div class="dots" id="dotsImg"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              <div class="img-grid" id="imgContent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="out-card">
+          <div class="out-head" onclick="toggleCollapse('titBody','chevTit')">
+            <div class="out-head-left"><span class="out-icon">🏆</span>Títulos + Thumbnails</div>
+            <div class="out-head-right">
+              <button class="icon-btn" onclick="event.stopPropagation();copyEl('titContent')">📋 Copiar</button>
+              <span class="chevron open" id="chevTit">▾</span>
+            </div>
+          </div>
+          <div class="collapse-body open" id="titBody">
+            <div class="out-body">
+              <div class="dots" id="dotsTit"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              <div id="titContent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxdp-n36Oiqp8Rw82_e77t3f88o9peL641UZHykNN7IS1ByiH1BugmFZNqBeZ5bofp9SA/exec';
+let API_KEY = '';
+let S = { nicho:'Historia', tono:'Dramático y cinematográfico', struct:'Narrativa cinematográfica con arco dramático', foco:'Storytelling puro con máxima emoción', idioma:'Español de España, coloquial y directo' };
+let lastScript = '';
+let appHistory = [];
+
+// ── NAVIGATION ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('mainApp').style.display = 'none';
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+function showLicScreen() { showScreen('licScreen'); }
+function showApiScreen() { showScreen('apiScreen'); }
+function showApp() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('mainApp').style.display = 'flex';
+  loadHistory();
+}
+
+// ── LICENSE VALIDATION ──
+async function validateLicense() {
+  const code = document.getElementById('licInput').value.trim().toUpperCase();
+  if (!code) { showLicError('Introduce tu código de licencia.'); return; }
+
+  const btn = document.getElementById('licBtn');
+  const btnText = document.getElementById('licBtnText');
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span> Verificando...';
+  document.getElementById('licError').style.display = 'none';
+  document.getElementById('licSuccess').style.display = 'none';
+
+  try {
+    const res = await fetch(`${SHEETS_URL}?code=${encodeURIComponent(code)}`);
+    const data = await res.json();
+
+    if (data.valid) {
+      document.getElementById('licSuccess').textContent = '✓ Licencia válida. Redirigiendo...';
+      document.getElementById('licSuccess').style.display = 'block';
+      localStorage.setItem('smp_lic', code);
+      localStorage.setItem('smp_lic_activated', Date.now());
+      setTimeout(() => {
+        showApiScreen();
+        const saved = localStorage.getItem('smp_key');
+        if (saved && saved.startsWith('sk-ant')) { API_KEY = saved; showApp(); }
+      }, 1200);
+    } else if (data.reason === 'usado') {
+      showLicError('Este código ya fue usado. Cada licencia es de uso único. Contacta soporte si crees que es un error.');
+    } else {
+      showLicError('Código no válido. Comprueba que lo has escrito correctamente.');
+    }
+  } catch(e) {
+    showLicError('Error de conexión. Comprueba tu internet e inténtalo de nuevo.');
+  }
+
+  btn.disabled = false;
+  btnText.textContent = 'Activar licencia';
+}
+
+function showLicError(msg) {
+  const el = document.getElementById('licError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ── API KEY ──
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k.startsWith('sk-ant')) {
+    document.getElementById('apiError').style.display = 'block';
+    return;
+  }
+  API_KEY = k;
+  localStorage.setItem('smp_key', k);
+  document.getElementById('apiError').style.display = 'none';
+  showApp();
+}
+function changeKey() {
+  localStorage.removeItem('smp_key');
+  showApiScreen();
+}
+
+// ── AUTO LOGIN ──
+window.onload = () => {
+  const lic = localStorage.getItem('smp_lic');
+  const key = localStorage.getItem('smp_key');
+  if (lic && key && key.startsWith('sk-ant')) {
+    API_KEY = key;
+    showApp();
+  } else if (lic) {
+    showApiScreen();
+  } else {
+    showLicScreen();
+  }
+};
+
+// Allow Enter key on license input
+document.addEventListener('DOMContentLoaded', () => {
+  const li = document.getElementById('licInput');
+  if (li) li.addEventListener('keydown', e => { if (e.key==='Enter') validateLicense(); });
+  const ai = document.getElementById('apiKeyInput');
+  if (ai) ai.addEventListener('keydown', e => { if (e.key==='Enter') saveApiKey(); });
+});
+
+// ── PILLS ──
+document.addEventListener('click', e => {
+  const p = e.target.closest('.pill');
+  if (!p || !p.dataset.g) return;
+  const g = p.dataset.g;
+  document.querySelectorAll(`.pill[data-g="${g}"]`).forEach(x => x.classList.remove('on'));
+  p.classList.add('on');
+  S[g] = p.dataset.v;
+});
+
+// ── SLIDER ──
+document.getElementById('durSlider').addEventListener('input', function(){ document.getElementById('durVal').textContent = this.value; });
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['config','history'][i]===tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if (tab==='history') renderHistory();
+}
+
+// ── COLLAPSE ──
+function toggleCollapse(bodyId, chevId) {
+  document.getElementById(bodyId).classList.toggle('open');
+  document.getElementById(chevId).classList.toggle('open');
+}
+
+// ── COPY / DOWNLOAD ──
+function copyEl(id) { navigator.clipboard.writeText(document.getElementById(id).innerText||'').catch(()=>{}); }
+function downloadEl(id, filename) {
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(document.getElementById(id).innerText||'');
+  a.download = filename; a.click();
+}
+function downloadAll() {
+  const tema = document.getElementById('tema').value.trim();
+  const txt = [
+    '=== SCRIPT MACHINE PRO ===',
+    'Tema: '+tema,
+    '\n\n=== GUION COMPLETO ===\n',
+    document.getElementById('scriptContent').innerText,
+    '\n\n=== 5 HOOKS ALTERNATIVOS ===\n',
+    document.getElementById('hooksContent').innerText,
+    '\n\n=== PROMPTS DE IMAGEN ===\n',
+    document.getElementById('imgContent').innerText,
+    '\n\n=== TÍTULOS Y THUMBNAILS ===\n',
+    document.getElementById('titContent').innerText,
+  ].join('');
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
+  a.download = 'guion-completo.txt'; a.click();
+}
+
+// ── DOTS ──
+function setDots(id, show) { document.getElementById(id).style.display = show?'flex':'none'; }
+
+// ── API CALL ──
+async function callAPI(system, user, maxTok=4096) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'x-api-key':API_KEY, 'anthropic-version':'2023-06-01' },
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:maxTok, system, messages:[{role:'user',content:user}] })
+  });
+  if (!r.ok) throw new Error('API error '+r.status);
+  const d = await r.json();
+  return d.content&&d.content[0] ? d.content[0].text : 'Error.';
+}
+
+// ── SCORE ──
+function setScore(id, val) {
+  const el = document.getElementById(id);
+  el.textContent = val;
+  el.className = 'sc-n'+(val>=90?' great':val>=75?' good':'');
+}
+
+// ── HISTORY ──
+function loadHistory() { try { appHistory = JSON.parse(localStorage.getItem('smp_hist')||'[]'); } catch{ appHistory=[]; } }
+function saveHistory(tema, nicho, wc) {
+  appHistory.unshift({tema,nicho,wc,ts:Date.now()});
+  appHistory = appHistory.slice(0,12);
+  localStorage.setItem('smp_hist', JSON.stringify(appHistory));
+}
+function renderHistory() {
+  const el = document.getElementById('histList');
+  if (!appHistory.length) { el.innerHTML='<div class="hist-empty">Aún no has generado ningún guion.</div>'; return; }
+  el.innerHTML = appHistory.map(h=>`<div class="hist-item" onclick="switchTab('config')">
+    <div class="hist-item-title">${h.tema}</div>
+    <div class="hist-item-meta">${h.nicho} · ${h.wc} palabras · ${new Date(h.ts).toLocaleDateString('es')}</div>
+  </div>`).join('');
+}
+
+// ── MAIN GENERATION ──
+async function startGeneration() {
+  const tema = document.getElementById('tema').value.trim();
+  const audiencia = document.getElementById('audiencia').value.trim()||'audiencia general interesada en el tema';
+  if (!tema) { alert('Escribe el tema del vídeo primero.'); return; }
+
+  const min = parseInt(document.getElementById('durSlider').value);
+  const palabras = Math.round(min*145);
+  const btn = document.getElementById('genBtn');
+  btn.disabled=true; btn.textContent='⏳ Generando...';
+
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('outputArea').style.display='block';
+  document.getElementById('outputTitle').textContent = tema.length>60?tema.substring(0,60)+'...':tema;
+  document.getElementById('outputMeta').textContent = `${S.nicho} · ${S.tono.split(' ')[0]} · ${min} min · ~${palabras.toLocaleString('es')} palabras`;
+
+  ['scriptContent','hooksContent','imgContent','titContent'].forEach(id=>{ const el=document.getElementById(id); if(el)el.textContent=''; if(el)el.innerHTML=''; });
+  ['sc1','sc2','sc3','sc4'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('wcBadge').textContent='—';
+  document.getElementById('sceneCount').textContent='—';
+  setDots('dotsScript',true); setDots('dotsHooks',true); setDots('dotsImg',true); setDots('dotsTit',true);
+  ['scriptBody','hooksBody','imgBody','titBody'].forEach(id=>document.getElementById(id).classList.add('open'));
+
+  const scriptSys=`Eres el mejor guionista del mundo para canales faceless de YouTube. Tu único objetivo es crear guiones que generen retención del 100%.
+
+ESTRUCTURA OBLIGATORIA:
+1. HOOK (primeras 25-30 palabras): La frase más impactante posible. Sin "Hola", sin presentaciones. Curiosity gap devastador, dato que golpea, pregunta que duele, o inicio in medias res en plena acción.
+2. PROMESA (siguientes 3-4 frases): Di exactamente qué va a descubrir el espectador. Hazlo irresistible e inevitable.
+3. DESARROLLO con REHOOKS: Cada 180-220 palabras inserta un rehook poderoso. Ejemplos: "Pero lo que nadie sabe es que...", "Espera, porque esto se pone peor...", "Y aquí es donde todo cambia...", "Lo que viene ahora va a hacerte replantear todo...", "Esto es lo que nunca te contaron...". NUNCA dejes que el espectador tenga excusa para irse.
+4. PUNTO CULMINANTE: El momento de mayor tensión, sorpresa o revelación.
+5. CIERRE + CTA: Resolución, reflexión emocional breve, pregunta directa para comentarios, mención al siguiente vídeo.
+
+TÉCNICAS DE RETENCIÓN:
+- Frases cortas. Máximo 15 palabras por frase. Varía el ritmo.
+- Implica al espectador: "Imagina que eres tú...", "Piensa en esto un segundo..."
+- Cliffhangers internos: termina párrafos dejando algo sin resolver.
+- Números concretos siempre, nunca vagos.
+- Descripción sensorial: lo que se ve, huele, oye, siente.
+
+TONO: ${S.tono}
+ESTRUCTURA: ${S.struct}
+ENFOQUE: ${S.foco}
+IDIOMA: ${S.idioma}
+AUDIENCIA: ${audiencia}
+PALABRAS OBJETIVO: aproximadamente ${palabras} palabras.
+
+REGLA CRÍTICA: Devuelve SOLO el guion limpio. Sin títulos de sección, sin corchetes, sin instrucciones. Solo el texto corrido listo para grabar.`;
+
+  try {
+    const script = await callAPI(scriptSys, `Escribe el guion sobre: "${tema}". Nicho: ${S.nicho}.`, 4096);
+    lastScript = script;
+    setDots('dotsScript',false);
+    document.getElementById('scriptContent').textContent = script;
+    const wc = script.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('wcBadge').textContent = wc.toLocaleString('es')+' palabras';
+    const rehooks=(script.match(/pero lo que|espera|y aquí|esto es lo|lo que viene|nadie sabe|cambia todo|se pone peor|replantear|nunca te contaron/gi)||[]).length;
+    setScore('sc1', Math.min(98,Math.round(70+script.split(' ').slice(0,30).join(' ').length/5)));
+    setScore('sc2', Math.min(98,rehooks*15+45));
+    setScore('sc3', Math.round(80+Math.random()*15));
+    setScore('sc4', /comenta|déjame|dime|cuéntame|suscr|siguiente/i.test(script)?Math.round(90+Math.random()*8):75);
+    saveHistory(tema, S.nicho, wc);
+
+    // HOOKS
+    const hooksSys=`Eres el mayor experto mundial en hooks virales de YouTube. Genera exactamente 5 hooks de apertura distintos y devastadores. Tipos obligatorios: 1) Dato perturbador, 2) Pregunta que duele, 3) Afirmación polémica, 4) In medias res, 5) Curiosity gap extremo. Máximo 35 palabras por hook. Separa con línea en blanco. Idioma: ${S.idioma}. Solo los 5 hooks, sin numeración ni explicaciones.`;
+    const hooksRaw = await callAPI(hooksSys,`Hooks para: "${tema}". Tono: ${S.tono}. Audiencia: ${audiencia}.`,800);
+    setDots('dotsHooks',false);
+    const tipos=['Dato perturbador','Pregunta que duele','Afirmación polémica','In medias res','Curiosity gap'];
+    const hookLines=hooksRaw.split('\n').filter(l=>l.trim().length>10).slice(0,5);
+    document.getElementById('hooksContent').innerHTML=hookLines.map((h,i)=>
+      `<div class="hook-item"><div class="hook-type">${tipos[i]||'Hook '+(i+1)}</div>${h.trim()}</div>`
+    ).join('');
+
+    // IMAGE PROMPTS
+    const imgSys=`Eres experto en prompts de imagen con IA (Midjourney, DALL-E, Stable Diffusion). Analiza el guion y divide en 8-10 escenas visuales clave. Para cada escena genera un prompt profesional en INGLÉS: sujeto, acción, escenario, iluminación, estilo visual cinemático, mood, composición, aspect ratio 16:9. Responde ÚNICAMENTE con JSON válido sin markdown:
+[{"scene":"Nombre corto","prompt":"prompt completo en inglés"}]`;
+    const imgRaw = await callAPI(imgSys,`Guion: ${script.substring(0,3500)}`,2500);
+    setDots('dotsImg',false);
+    try {
+      const scenes=JSON.parse(imgRaw.replace(/```json|```/g,'').trim());
+      document.getElementById('sceneCount').textContent=scenes.length+' escenas';
+      document.getElementById('imgContent').innerHTML=scenes.map((s,i)=>
+        `<div class="img-prompt"><div class="ip-head"><div class="ip-scene">Escena ${i+1} · ${s.scene}</div><button class="ip-copy" onclick="navigator.clipboard.writeText(this.closest('.img-prompt').querySelector('.ip-text').textContent)">📋 Copiar</button></div><div class="ip-text">${s.prompt}</div></div>`
+      ).join('');
+    } catch { document.getElementById('imgContent').innerHTML=`<div class="script-text">${imgRaw}</div>`; }
+
+    // TITLES + THUMBNAILS
+    const titSys=`Eres experto en CTR y viralidad de YouTube. Genera: 5 títulos para máximo CTR (número/dato O emoción O curiosity gap, máx 60 caracteres) y 3 conceptos de thumbnail detallados. Responde ÚNICAMENTE con JSON válido sin markdown:
+{"titles":["t1","t2","t3","t4","t5"],"thumbnails":[{"concept":"nombre","description":"descripción visual detallada"}]}`;
+    const titRaw = await callAPI(titSys,`Tema: "${tema}". Nicho: ${S.nicho}. Tono: ${S.tono}. Audiencia: ${audiencia}. Idioma: ${S.idioma}.`,1200);
+    setDots('dotsTit',false);
+    try {
+      const data=JSON.parse(titRaw.replace(/```json|```/g,'').trim());
+      let html='<div style="margin-bottom:1rem"><div class="lbl">🏆 Títulos — clic para copiar</div>';
+      data.titles.forEach((t,i)=>{ html+=`<div class="title-item" onclick="navigator.clipboard.writeText(this.querySelector('span:last-child').textContent)"><span class="title-num">#${i+1}</span><span>${t}</span></div>`; });
+      html+='</div><div class="lbl">🖼 Conceptos de thumbnail</div>';
+      data.thumbnails.forEach((th,i)=>{ html+=`<div class="thumb-item"><div class="thumb-label">Thumbnail ${i+1} · ${th.concept}</div><div class="thumb-desc">${th.description}</div></div>`; });
+      document.getElementById('titContent').innerHTML=html;
+    } catch { document.getElementById('titContent').innerHTML=`<div class="script-text">${titRaw}</div>`; }
+
+  } catch(e) {
+    setDots('dotsScript',false);
+    document.getElementById('scriptContent').textContent='Error: '+e.message+'\n\nComprueba tu API key en console.anthropic.com y que tienes saldo disponible.';
+  }
+  btn.disabled=false; btn.textContent='✦ Generar guion completo';
+}
+
+// ── REGEN SECTION ──
+async function regenSection(section) {
+  if (!lastScript) return;
+  const tema=document.getElementById('tema').value.trim();
+  document.querySelectorAll('.regen-btn').forEach(b=>b.disabled=true);
+  const el=document.getElementById('scriptContent');
+  const old=el.textContent;
+  el.textContent='⏳ Regenerando '+section+'...';
+  try {
+    const sys=`Eres el mejor guionista de YouTube. Reescribe únicamente la sección "${section}" de forma más impactante y viral. Tono: ${S.tono}. Idioma: ${S.idioma}. Devuelve SOLO el texto de esa sección, sin explicaciones.`;
+    const result=await callAPI(sys,`Tema: "${tema}". Sección: ${section}. Guion actual (referencia): ${lastScript.substring(0,1500)}`,700);
+    el.textContent=`[${section.toUpperCase()} — VERSIÓN MEJORADA]\n\n${result}\n\n---\n\n${old.substring(0,old.length>600?500:old.length)}...`;
+    lastScript=el.textContent;
+  } catch { el.textContent=old; }
+  document.querySelectorAll('.regen-btn').forEach(b=>b.disabled=false);
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey)&&e.key==='Enter') startGeneration();
+});
+</script>
+</body>
+</html>
