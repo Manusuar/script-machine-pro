@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Script Machine Pro 3.0 · Faceless YouTube</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- LICENSE SCREEN -->
+<div class="screen active" id="licScreen">
+  <div class="auth-card">
+    <div class="auth-logo">🎬</div>
+    <h1 class="auth-title">Script Machine Pro</h1>
+    <p class="auth-sub">La máquina de facturar en YouTube.<br>Introduce tu código de licencia para activar.</p>
+    <div class="field-label">Código de licencia</div>
+    <input class="field-input" id="licInput" type="text" placeholder="LIC20260001" autocomplete="off" maxlength="30">
+    <button class="primary-btn" id="licBtn" onclick="validateLicense()"><span id="licBtnTxt">Activar licencia →</span></button>
+    <div class="msg error" id="licErr"></div>
+    <div class="msg success" id="licOk"></div>
+    <div class="auth-footer">¿Sin licencia? Consíguela en <a href="#" target="_blank">tu-web.com</a><br>Cada código es de uso único y personal.</div>
+  </div>
+</div>
+<!-- MAIN APP -->
+<div id="mainApp">
+  <nav class="nav">
+    <div class="nav-logo">🎬</div>
+    <div class="nav-brand">Script Machine <span>Pro</span> <small style="font-size:10px;opacity:.5">3.0</small></div>
+    <div style="flex:1"></div>
+    <span class="nav-badge" id="usageBadge">0 guiones generados</span>
+    <button class="nav-btn" onclick="openTutorial()">❓ Tutorial</button>
+    <button class="nav-btn" onclick="logout()">🔓 Cerrar sesión</button>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-tabs">
+        <div class="stab active" role="tab" tabindex="0" aria-selected="true" onclick="switchStab('config')">⚙ Config</div>
+        <div class="stab" role="tab" tabindex="0" aria-selected="false" onclick="switchStab('profiles')">👤 Canales</div>
+        <div class="stab" role="tab" tabindex="0" aria-selected="false" onclick="switchStab('history')">🕐 Hist.</div>
+        <div class="stab" role="tab" tabindex="0" aria-selected="false" onclick="switchStab('templates')">📋 Temas</div>
+      </div>
+      <div class="stab-panel active" id="stab-config">
+        <div class="section">
+          <div class="lbl">Nicho</div>
+          <div class="g3">
+            <div class="pill on" data-g="nicho" data-v="Historia"><div class="ico">📜</div>Historia</div>
+            <div class="pill" data-g="nicho" data-v="Finanzas"><div class="ico">💰</div>Finanzas</div>
+            <div class="pill" data-g="nicho" data-v="Salud"><div class="ico">🫀</div>Salud</div>
+            <div class="pill" data-g="nicho" data-v="Misterio"><div class="ico">👁</div>Misterio</div>
+            <div class="pill" data-g="nicho" data-v="Motivación"><div class="ico">🔥</div>Motivación</div>
+            <div class="pill" data-g="nicho" data-v="IA y Tecnología"><div class="ico">🤖</div>IA/Tech</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="lbl">Tono</div>
+          <div class="g3">
+            <div class="pill on" data-g="tono" data-v="Dramático y cinematográfico"><div class="ico">🎭</div>Dramático</div>
+            <div class="pill" data-g="tono" data-v="Misterioso y perturbador"><div class="ico">🌙</div>Misterioso</div>
+            <div class="pill" data-g="tono" data-v="Motivacional e inspirador"><div class="ico">⚡</div>Motivacional</div>
+            <div class="pill" data-g="tono" data-v="Casual como un amigo"><div class="ico">☕</div>Casual</div>
+            <div class="pill" data-g="tono" data-v="Educativo con autoridad"><div class="ico">📚</div>Educativo</div>
+            <div class="pill" data-g="tono" data-v="Oscuro y perturbador"><div class="ico">💀</div>Oscuro</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="lbl">Estructura</div>
+          <div class="g2">
+            <div class="pill on" data-g="struct" data-v="Narrativa cinematográfica con arco dramático"><div class="ico">🎬</div>Narrativa</div>
+            <div class="pill" data-g="struct" data-v="Top listicle con gancho en cada punto"><div class="ico">📋</div>Top listicle</div>
+            <div class="pill" data-g="struct" data-v="Historia real con datos impactantes"><div class="ico">📊</div>Historia+datos</div>
+            <div class="pill" data-g="struct" data-v="Falso misterio estilo conspiracy"><div class="ico">❓</div>Falso misterio</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="lbl">Enfoque</div>
+          <div class="g3">
+            <div class="pill on" data-g="foco" data-v="Storytelling puro con máxima emoción"><div class="ico">🔥</div>Story</div>
+            <div class="pill" data-g="foco" data-v="Informativo con datos concretos"><div class="ico">💡</div>Info</div>
+            <div class="pill" data-g="foco" data-v="Mixto equilibrado"><div class="ico">⚖</div>Mixto</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="lbl">Nivel</div>
+          <div class="g3">
+            <div class="pill on" data-g="nivel" data-v="muy simple y accesible"><div class="ico">🟢</div>Simple</div>
+            <div class="pill" data-g="nivel" data-v="intermedio y natural"><div class="ico">🟡</div>Medio</div>
+            <div class="pill" data-g="nivel" data-v="técnico y avanzado"><div class="ico">🔴</div>Avanzado</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="lbl">Idioma</div>
+          <div class="g2">
+            <div class="pill on" data-g="idioma" data-v="Español de España, coloquial y directo"><div class="ico">🇪🇸</div>España</div>
+            <div class="pill" data-g="idioma" data-v="Español latinoamericano neutro"><div class="ico">🌎</div>LATAM</div>
+            <div class="pill" data-g="idioma" data-v="English conversational American style"><div class="ico">🇺🇸</div>English</div>
+            <div class="pill" data-g="idioma" data-v="Português brasileiro"><div class="ico">🇧🇷</div>Português</div>
+          </div>
+        </div>
+        <div class="divl"></div>
+        <div class="section">
+          <div class="lbl">URL de vídeo viral de referencia (opcional)</div>
+          <input class="tinput" id="ytUrl" placeholder="https://youtube.com/watch?v=...">
+        </div>
+        <div class="section">
+          <div class="lbl">Audiencia objetivo</div>
+          <textarea id="audiencia" rows="2" placeholder="Ej: Hombres 25-40, apasionados de la historia..."></textarea>
+        </div>
+        <div class="section">
+          <div class="lbl">Tema del vídeo <span id="temaCounter" class="tema-counter">0 / 600</span></div>
+          <textarea id="tema" rows="3" maxlength="600" placeholder="Ej: Los 7 errores que comete el 95% de personas con la IA..."></textarea>
+        </div>
+        <div id="viralPreview" style="display:none" class="viral-preview">
+          <div class="vp-row"><span class="vp-label">⚡ Potencial viral</span><span id="vpNum" class="vp-num">—</span></div>
+          <div class="vp-bar-wrap"><div id="vpBar" class="vp-bar"></div></div>
+          <div id="vpVerdict" class="vp-verdict"></div>
+        </div>
+        <div class="section">
+          <div class="lbl">Duración objetivo</div>
+          <div class="slider-row">
+            <input type="range" id="durSlider" min="2" max="20" step="1" value="7">
+            <span class="sv"><span id="durVal">7</span> min</span>
+          </div>
+          <div class="sl-hints"><span>2 min</span><span>10 min</span><span>20 min</span></div>
+        </div>
+        <button class="gen-btn" id="genBtn" onclick="startGeneration()">✦ Generar todo</button>
+      </div>
+      <div class="stab-panel" id="stab-profiles">
+        <div class="lbl" style="margin-bottom:.75rem">Mis canales</div>
+        <div id="profilesList"></div>
+        <button class="add-profile-btn" onclick="openAddProfile()">+ Añadir canal</button>
+        <div class="divl"></div>
+        <div class="lbl">Voz del canal activo</div>
+        <textarea id="canalVoz" rows="4" placeholder="Describe el estilo de voz de tu canal..."></textarea>
+        <button class="gen-btn" style="margin-top:.5rem" onclick="saveVoz()">💾 Guardar voz</button>
+      </div>
+      <div class="stab-panel" id="stab-history">
+        <div class="lbl" style="margin-bottom:.75rem">Últimos guiones</div>
+        <div id="histList"></div>
+      </div>
+      <div class="stab-panel" id="stab-templates">
+        <div class="lbl" style="margin-bottom:.75rem">Temas que funcionan</div>
+        <div id="tplList"></div>
+      </div>
+    </aside>
+<main class="main" id="mainContent">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎬</div>
+        <div class="empty-title">Listo para generar</div>
+        <p class="empty-sub">Configura tu vídeo y pulsa Generar. En 30 segundos tienes guion, hooks, imágenes, títulos, shorts, descripción SEO y calendario.</p>
+      </div>
+      <div id="outputArea" style="display:none">
+        <div class="counter-row" id="counterRow">
+          <div class="counter-card"><div class="counter-n" id="cntGuiones">0</div><div class="counter-l">Guiones</div></div>
+          <div class="counter-card"><div class="counter-n" id="cntCost">$0.00</div><div class="counter-l">Coste API</div></div>
+          <div class="counter-card"><div class="counter-n" id="cntHoras">0h</div><div class="counter-l">Horas ahorradas</div></div>
+        </div>
+        <div class="out-header">
+          <div>
+            <div class="out-title" id="outTitle">—</div>
+            <div class="out-meta" id="outMeta">—</div>
+          </div>
+          <div class="out-actions">
+            <button class="ibtn" onclick="downloadAll()">⬇ Descargar todo</button>
+            <button class="ibtn" onclick="exportGDocs()">📄 Google Docs</button>
+          </div>
+        </div>
+        <div class="score-row">
+          <div class="sc"><div class="sc-n" id="sc1">—</div><div class="sc-l">Hook</div></div>
+          <div class="sc"><div class="sc-n" id="sc2">—</div><div class="sc-l">Rehooks</div></div>
+          <div class="sc"><div class="sc-n" id="sc3">—</div><div class="sc-l">Ritmo</div></div>
+          <div class="sc"><div class="sc-n" id="sc4">—</div><div class="sc-l">CTA</div></div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('viralBody','chevViral')">
+            <div class="out-hl"><span class="out-ico">⚡</span>Análisis viral<span class="out-badge" id="viralBadge">—</span></div>
+            <div class="out-hr"><span class="chev open" id="chevViral">▾</span></div>
+          </div>
+          <div class="cbody open" id="viralBody">
+            <div class="obody"><div class="dots" id="dotsViral"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="viralContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('scriptBody','chevScript')">
+            <div class="out-hl"><span class="out-ico">📝</span>Guion completo<span class="out-badge" id="wcBadge">—</span></div>
+            <div class="out-hr">
+              <button class="ibtn" onclick="event.stopPropagation();copyEl('scriptContent')">📋 Copiar</button>
+              <button class="ibtn" onclick="event.stopPropagation();downloadEl('scriptContent','guion.txt')">⬇ .txt</button>
+              <button class="ibtn" onclick="event.stopPropagation();openTeleprompter()">📺 Teleprompter</button>
+              <span class="chev open" id="chevScript">▾</span>
+            </div>
+          </div>
+          <div class="cbody open" id="scriptBody">
+            <div class="obody"><div class="dots" id="dotsScript"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="script-text" id="scriptContent"></div></div>
+            <div class="regen-area">
+              <div class="lbl">Regenerar sección</div>
+              <div class="regen-row">
+                <button class="regen-btn" onclick="regenSection('hook de apertura')">⚡ Hook</button>
+                <button class="regen-btn" onclick="regenSection('introducción y promesa')">▶ Intro</button>
+                <button class="regen-btn" onclick="regenSection('desarrollo central')">📄 Desarrollo</button>
+                <button class="regen-btn" onclick="regenSection('cierre y CTA')">🏁 Cierre</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('editBody','chevEdit')">
+            <div class="out-hl"><span class="out-ico">🎞</span>Guion con notas de edición</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();downloadAnnotated()">⬇ .txt</button><span class="chev open" id="chevEdit">▾</span></div>
+          </div>
+          <div class="cbody open" id="editBody">
+            <div class="obody"><div class="dots" id="dotsEdit"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="script-text" id="editContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('detectBody','chevDetect')">
+            <div class="out-hl"><span class="out-ico">🔍</span>Detector de frases de IA<span class="out-badge" id="detectBadge">—</span></div>
+            <div class="out-hr"><span class="chev open" id="chevDetect">▾</span></div>
+          </div>
+          <div class="cbody open" id="detectBody">
+            <div class="obody"><div class="dots" id="dotsDetect"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="detectContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('abBody','chevAB')">
+            <div class="out-hl"><span class="out-ico">🔀</span>A/B Test — 2 versiones del guion</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();downloadAB()">⬇ Descargar A/B</button><span class="chev open" id="chevAB">▾</span></div>
+          </div>
+          <div class="cbody open" id="abBody">
+            <div class="obody"><div class="dots" id="dotsAB"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="abContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('transBody','chevTrans')">
+            <div class="out-hl"><span class="out-ico">🌍</span>4 idiomas simultáneos</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();downloadTranslations()">⬇ Descargar</button><span class="chev open" id="chevTrans">▾</span></div>
+          </div>
+          <div class="cbody open" id="transBody">
+            <div class="obody"><div class="dots" id="dotsTrans"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="transContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('hooksBody','chevHooks')">
+            <div class="out-hl"><span class="out-ico">🎣</span>5 hooks alternativos</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('hooksContent')">📋 Copiar</button><span class="chev open" id="chevHooks">▾</span></div>
+          </div>
+          <div class="cbody open" id="hooksBody">
+            <div class="obody"><div class="dots" id="dotsHooks"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="hook-grid" id="hooksContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('imgBody','chevImg')">
+            <div class="out-hl"><span class="out-ico">🖼</span>Prompts de imagen<span class="out-badge" id="sceneCount">—</span></div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('imgContent')">📋 Copiar</button><button class="ibtn" onclick="event.stopPropagation();downloadEl('imgContent','prompts.txt')">⬇ .txt</button><span class="chev open" id="chevImg">▾</span></div>
+          </div>
+          <div class="cbody open" id="imgBody">
+            <div class="obody"><div class="dots" id="dotsImg"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="img-grid" id="imgContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('titBody','chevTit')">
+            <div class="out-hl"><span class="out-ico">🏆</span>Títulos + Thumbnails</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('titContent')">📋 Copiar</button><span class="chev open" id="chevTit">▾</span></div>
+          </div>
+          <div class="cbody open" id="titBody">
+            <div class="obody"><div class="dots" id="dotsTit"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="titContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('shortsBody','chevShorts')">
+            <div class="out-hl"><span class="out-ico">📱</span>3 Shorts / Reels listos</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('shortsContent')">📋 Copiar</button><span class="chev open" id="chevShorts">▾</span></div>
+          </div>
+          <div class="cbody open" id="shortsBody">
+            <div class="obody"><div class="dots" id="dotsShorts"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div id="shortsContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('descBody','chevDesc')">
+            <div class="out-hl"><span class="out-ico">🔍</span>Descripción SEO</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('descContent')">📋 Copiar</button><span class="chev open" id="chevDesc">▾</span></div>
+          </div>
+          <div class="cbody open" id="descBody">
+            <div class="obody"><div class="dots" id="dotsDesc"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="desc-text" id="descContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('calBody','chevCal')">
+            <div class="out-hl"><span class="out-ico">📅</span>Calendario 30 días</div>
+            <div class="out-hr"><button class="ibtn" onclick="event.stopPropagation();copyEl('calContent')">📋 Copiar</button><span class="chev open" id="chevCal">▾</span></div>
+          </div>
+          <div class="cbody open" id="calBody">
+            <div class="obody"><div class="dots" id="dotsCal"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="cal-grid" id="calContent"></div></div>
+          </div>
+        </div>
+        <div class="out-card">
+          <div class="out-head" onclick="toggleC('voiceBody','chevVoice')">
+            <div class="out-hl"><span class="out-ico">🎙</span>Voz en off MP3</div>
+            <div class="out-hr"><span class="chev open" id="chevVoice">▾</span></div>
+          </div>
+          <div class="cbody open" id="voiceBody">
+            <div class="obody" id="voiceResult">
+              <div style="font-size:13px;color:var(--muted);text-align:center;padding:1rem">
+                🎙 Función de voz próximamente disponible.<br>Conecta tu API key de ElevenLabs para activarla.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- TELEPROMPTER -->
+<div class="tele-overlay" id="teleOverlay" style="display:none">
+  <div class="tele-nav">
+    <div class="tele-nav-title">📺 Modo Teleprompter</div>
+    <div class="tele-controls">
+      <div class="tele-speed"><span>Velocidad</span><input type="range" id="teleSpeed" min="1" max="10" value="3"></div>
+      <button class="tele-btn" id="telePlayBtn" onclick="toggleTeleplay()">▶ Play</button>
+      <button class="tele-btn" onclick="closeTeleprompter()">✕ Cerrar</button>
+    </div>
+  </div>
+  <div class="tele-body" id="teleBody"><div class="tele-text" id="teleText"></div></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="profileModal">
+  <div class="modal">
+    <div class="modal-title">➕ Añadir canal</div>
+    <div class="lbl">Nombre del canal</div>
+    <input class="field-input" id="profileName" placeholder="Ej: Mi Canal de Historia" style="margin-bottom:.75rem">
+    <div class="lbl">Nicho principal</div>
+    <input class="field-input" id="profileNicho" placeholder="Ej: Historia, Finanzas, IA...">
+    <div class="modal-actions">
+      <button class="modal-btn ghost" onclick="closeModal('profileModal')">Cancelar</button>
+      <button class="modal-btn primary" onclick="saveProfile()">Guardar canal</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL -->
+<div class="tutorial-overlay" id="tutorialOverlay">
+  <div class="tutorial-card">
+    <div class="tutorial-step" id="tutStep">Paso 1 de 6</div>
+    <div class="tutorial-icon" id="tutIcon">🎬</div>
+    <div class="tutorial-title" id="tutTitle">Bienvenido</div>
+    <div class="tutorial-desc" id="tutDesc"></div>
+    <div class="tut-dots" id="tutDots"></div>
+    <div class="tut-btns">
+      <button class="modal-btn ghost" onclick="skipTutorial()">Saltar</button>
+      <button class="modal-btn primary" onclick="nextTutStep()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="progress-overlay" id="progressOverlay" style="display:none">
+  <div class="progress-card">
+    <div class="progress-title">✦ Generando tu contenido</div>
+    <div id="progressSteps"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
